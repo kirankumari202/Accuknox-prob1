@@ -1,0 +1,42 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        
+
+      - name: Login to Docker Hub
+        uses: docker login
+        with:
+          username: kirankumari202
+          password: #Kiran202
+
+      - name: Build Docker image
+        run: docker build -t wisecow-main:latest .
+
+      - name: Push Docker image
+        run: docker push wisecow-main:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -f deployment.yaml
+
+      -name: start minikube
+       use: minikube start
+
+      -name: start minikube dashboard
+       use:  minikube dashboard
+
+       -name: access the service
+       use: minikube service wisecow-service
+        
